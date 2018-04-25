@@ -26,23 +26,24 @@ def client_thread(peer_files):
 	print("IP Address of Server for the File Request")
 	host = str(input())
 	port = 12345
-	s.connect((host,port))
-	print(s.recv(1024).decode())
+	client_socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
+	client_socket.connect((host,port))
+	print(client_socket.recv(1024).decode())
 	file_name = str(input())
-	s.sendall(file_name.encode())
-	file_received=s.recv(4028)
-	conn.close()
+	client_socket.sendall(file_name.encode())
+	file_received=client_socket.recv(4028)
+	client_socket.close()
 
 # Server Thread
 def server_thread():
-	s=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
+	server_socket=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
 	host= inet_addr()
-	port=1234
-	s.bind((host,port))
+	port=12345
+	server_socket.bind((host,port))
 	print("waiting..."+str(host))
-	s.listen(5)
+	server_socket.listen(5)
 	while True:
-		conn,addr=s.accept()
+		conn,addr=server_socket.accept()
 		print("connected "+str(addr))
 		conn.sendall(b"File Name")
 		files_name=conn.recv(1024).decode()
@@ -52,23 +53,28 @@ def server_thread():
 			conn.sendall(l)
 		except:
 			conn.sendall(b"File not found")
-		
-s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-host= "10.7.3.108"
-port= 9999
-s.connect((host,port))
 
-data = s.recv(1024).decode()
-print(data)
+def main(network_ip):	
+	s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+	host= network_ip
+	port= 9999
+	s.connect((host,port))
 
-files=list_files()
-s.sendall(files.encode())
-print(files)
-os.system("notify-send 'Sent!'")
+	data = s.recv(1024).decode()
+	print(data)
 
-peer_files = s.recv(1024)
-peer_files = pickle.loads(peer_files)
-s.close()
+	files=list_files()
+	s.sendall(files.encode())
+	print(files)
+	os.system("notify-send 'Sent!'")
 
-#threading.Thread(target=server_thread, args=()).start()
-threading.Thread(target=client_thread, args=(peer_files,)).start()
+	peer_files = s.recv(1024)
+	peer_files = pickle.loads(peer_files)
+	s.close()
+
+	threading.Thread(target=server_thread, args=()).start()
+	threading.Thread(target=client_thread, args=(peer_files,)).start()
+
+print("IP Address of Network")
+network_ip=str(input())
+main(network_ip)

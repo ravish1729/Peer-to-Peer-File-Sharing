@@ -38,15 +38,15 @@ while True:
 	peers.append(addr)
 	print(peers)
 	
-	conn.sendall(b"Files")
+	conn.sendall(b"Index Server wants File list")
 	files_data=conn.recv(1024).decode()
-	print(files_data)
 	all_files.append(index_peers(files_data,addr[0]))
 	print(all_files)
 	
 	dataa=pickle.dumps(all_files)
 	conn.sendall(dataa)
 	print("sent")
+	conn.close()
 s.close()
 
 
