@@ -21,8 +21,7 @@ def list_files():
 	return l
 
 # Client Thread
-def client_thread(peer_files):
-	print(peer_files)
+def client_thread():
 	print("IP Address of Server for the File Request")
 	host = str(input())
 	port = 12345
@@ -71,9 +70,13 @@ def main(network_ip):
 	peer_files = s.recv(1024)
 	peer_files = pickle.loads(peer_files)
 	s.close()
-
-	threading.Thread(target=server_thread, args=()).start()
-	threading.Thread(target=client_thread, args=(peer_files,)).start()
+	print(peer_files)
+	print("want to receive some files y/n")
+	decision=str(input())
+	if(decision=='y'):
+		threading.Thread(target=client_thread, args=()).start()
+	server_thread()
+	#threading.Thread(target=server_thread, args=()).start()
 
 print("IP Address of Network")
 network_ip=str(input())
