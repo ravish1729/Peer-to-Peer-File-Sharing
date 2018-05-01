@@ -45,7 +45,7 @@ while True:
 	
 	dataa=pickle.dumps(all_files)
 	conn.sendall(dataa)
-	print("sent")
+	print("Sent data to peer")
 	conn.close()
 s.close()
 
