@@ -3,29 +3,21 @@ import os
 from _thread import *
 import pickle
 
-# Get the inet address
-def inet_addr():
-	os.system("ifconfig wlp6s0 | grep 'inet addr' > ip.txt")
-	f=open("ip.txt",'r')
-	my_host=(((f.read()).lstrip()).split(' ')[1]).split(':')[1]
-	f.close()
-	os.system("rm ip.txt")
-	return my_host
-
 # List files
 def index_peers(files_data,address):
 	l=list()
-	l.append(address)
 	k=files_data.split('\n')
-	k=k[:-1]
-	l.append(k)
+	m=k[:-1]
+	n=k[-1]
+	l.append(n)
+	l.append(m)
 	return l
     
 # Code begins here
 all_files=list()  # stores list of peers with file details
 
 s=socket.socket(socket.AF_INET,socket.SOCK_STREAM,0)
-host= inet_addr()
+host="159.65.148.201"
 port=9999
 s.bind((host,port))
 
@@ -53,7 +45,8 @@ while True:
 	if(upgrade_flag):
 		all_files.append(received_files)
 	flag=1
-	print(all_files)
+	for i in all_files:
+		print(i)
 	
 	data=pickle.dumps(all_files)
 	conn.sendall(data)
