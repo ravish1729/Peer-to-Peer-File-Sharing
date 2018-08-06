@@ -3,7 +3,7 @@ import os
 from _thread import *
 import pickle
 
-# List files
+
 def index_peers(files_data,address):
 	l=list()
 	k=files_data.split('\n')
